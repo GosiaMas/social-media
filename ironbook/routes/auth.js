@@ -1,10 +1,19 @@
 const { Router } = require("express");
 const router = Router();
 
-router.get("/login");
-router.post("/login");
-router.get("/signup");
-router.post("/signup");
-router.get("/logout");
+// Retrieve Login Page
+router.get("/login", (req, res) => {});
+
+// Retrieve Login Request
+router.post("/login", (req, res) => {});
+
+// Retrieve Signup Page
+router.get("/signup", (req, res) => {});
+
+// Retrieve Login Request
+router.post("/signup", (req, res) => {});
+
+// Handle Logout Request
+router.get("/logout", (req, res) => {});
 
 module.exports = router;

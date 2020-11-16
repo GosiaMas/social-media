@@ -1,11 +1,24 @@
 const router = require("express").Router();
 
-router.get("/post");
-router.get("/new-post");
-router.post("/new-post");
-router.put("/like");
-router.post("/new-comment");
-router.put("/post/:id");
-router.delete("/post/:id");
+// * DOES NOT NEED
+router.get("/post", (req, res) => {});
+
+// * NEEDS AUTHENTICATED USER
+router.get("/new-post", (req, res) => {});
+
+// * NEEDS AUTHENTICATED USER
+router.post("/new-post", (req, res) => {});
+
+// * NEEDS AUTHENTICATED USER
+router.put("/like", (req, res) => {});
+
+// * NEEDS AUTHENTICATED USER
+router.post("/new-comment", (req, res) => {});
+
+// * NEEDS AUTHENTICATED USER
+router.put("/post/:id", (req, res) => {});
+
+// * NEEDS AUTHENTICATED USER
+router.delete("/post/:id", (req, res) => {});
 
 module.exports = router;

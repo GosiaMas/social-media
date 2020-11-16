@@ -1,8 +1,7 @@
 const router = require("express").Router();
 
-router.get("/gallery");
-router.post("/new-photo");
-router.put("/:id");
-router.delete("/:id");
+router.post("/new-photo", (req, res) => {});
+router.put("/:id", (req, res) => {});
+router.delete("/:id", (req, res) => {});
 
 module.exports = router;
