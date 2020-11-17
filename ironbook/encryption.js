@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 
 console.log(bcrypt.genSaltSync(18));
-// Signing up a user
+// Signinpmng up a user
 const saltCreated = bcrypt.genSaltSync(18);
 const myHashedPassword = bcrypt.hashSync("password", saltCreated);
 

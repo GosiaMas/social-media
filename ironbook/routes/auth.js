@@ -2,19 +2,44 @@ const { Router } = require("express");
 const router = Router();
 const User = require("../models/User.model");
 const bcrypt = require("bcryptjs");
-
 const salt = 10;
 
+/* 
+👋 The async await logic of the POST /login is below this file
+*/
+
 // Retrieve Login Page
-router.get("/login", (req, res) => {});
+router.get("/login", (req, res) => {
+  res.render("auth/login");
+});
 
 // Retrieve Login Request
-router.post("/login", (req, res) => {});
+router.post("/login", (req, res) => {
+  const { username, password } = req.body;
+
+  if (username.length < 4 || password.length < 8) {
+    //   error handling
+  }
+
+  User.findOne({ username }).then((user) => {
+    if (!user) {
+      return; //   error handle and say wrong username
+    }
+    bcrypt.compare(password, user.password).then((isSamePassword) => {
+      if (!isSamePassword) {
+        //  error handle and say wrong password
+        return;
+      }
+
+      res.redirect("/");
+    });
+  });
+});
 
 // Retrieve Signup Page
 router.get("/signup", (req, res) => {
   console.log("SIGNUP REQ");
-  res.render("signup");
+  res.render("auth/signup");
 });
 
 // Retrieve Login Request
@@ -72,3 +97,26 @@ router.post("/signup", (req, res) => {
 router.get("/logout", (req, res) => {});
 
 module.exports = router;
+
+// router.post("/login", async (req, res) => {
+//   const { username, password } = req.body;
+
+//   if (username.length < 4 || password.length < 8) {
+//     //   error handling
+//   }
+//   try {
+//     const user = await User.findOne({ username });
+//     if (!user) {
+//       return;
+//     }
+//     const isSamePassword = await bcrypt.compare(password, user.password);
+//     if (!isSamePassword) {
+//       //  error handle and say wrong password
+//       return;
+//     }
+
+//     res.redirect("/");
+//   } catch (error) {
+//     console.log(error);
+//   }
+// });
