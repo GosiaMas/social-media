@@ -83,6 +83,7 @@ router.post("/signup", (req, res) => {
       })
       .then((userCreated) => {
         console.log("userCreated:", userCreated);
+        req.session.user = userCreated;
         res.redirect("/");
       });
   });

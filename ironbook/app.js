@@ -8,6 +8,8 @@ const hbs = require("hbs");
 const mongoose = require("mongoose");
 const logger = require("morgan");
 const path = require("path");
+const session = require("express-session");
+const MongoStore = require("connect-mongo")(session);
 
 mongoose
   .connect("mongodb://localhost/ironbook", { useNewUrlParser: true })
@@ -32,6 +34,15 @@ app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+app.use(
+  session({
+    secret: "keyboard cat",
+    resave: false,
+    saveUninitialized: false,
+    store: new MongoStore({ mongooseConnection: mongoose.connection }),
+  })
+);
 
 // Express View engine setup
 
