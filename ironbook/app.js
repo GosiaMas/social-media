@@ -43,7 +43,7 @@ app.use(
     store: new MongoStore({ mongooseConnection: mongoose.connection }),
   })
 );
-// s%3Aow69dT2rTPvQIBh7CskupuErClJ0kKDF.Chsur7NGPnsu5j4yd5uOOjWv7IiFi%2BISNgK6%2FRpY5PA
+// s%3AQ7Ys-lSbYdkjM4CCj-N6biFB_o5J6v-c.v6wpf%2BnYhj6aFfj4UwYspeMDy9A%2B%2BYgbtDjJEzUEH1w
 // Express View engine setup
 
 app.use(
@@ -64,8 +64,16 @@ app.locals.title = "Express - Generated with IronGenerator";
 
 const index = require("./routes/index");
 const authRouter = require("./routes/auth");
+const profileRoutes = require("./routes/profile");
+const postRouter = require("./routes/post");
+
+// router.get("/")
 app.use("/", index);
 
+// /auth/signup
+// router.get("/signup")
 app.use("/auth", authRouter);
+app.use("/profile", profileRoutes);
+app.use("/post", postRouter);
 
 module.exports = app;

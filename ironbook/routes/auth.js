@@ -38,18 +38,20 @@ router.post("/login", shouldNotBeAuthenticated, (req, res) => {
     //   error handling
   }
 
-  User.findOne({ username }).then((user) => {
-    if (!user) {
+  User.findOne({ username }).then((userFromDB) => {
+    if (!userFromDB) {
       // please provide a correct username
       return; //   error handle and say wrong username
     }
-    bcrypt.compare(password, user.password).then((isSamePassword) => {
+    bcrypt.compare(password, userFromDB.password).then((isSamePassword) => {
       if (!isSamePassword) {
         // wrong password. try again
         //  error handle and say wrong password
         return;
       }
-      req.session.user = user;
+      // req.session.user || in this case, everytime we assign something to req.session we are storing it in the memory
+      // DOWN is how we LOG IN
+      req.session.user = userFromDB;
       res.redirect("/");
     });
   });

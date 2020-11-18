@@ -1,20 +1,65 @@
 const router = require("express").Router();
+const bcrypt = require("bcryptjs");
+const User = require("../models/User.model");
 
-router.get("/profile", (req, res) => {});
+// * NEEDS AUTHENTICATED USER
+router.get("/settings", (req, res) => {
+  if (!req.session.user) {
+    // ! IT MEANS THAT THERE IS NOT USER LOGGED IN
+    return res.redirect("/auth/login");
+  }
 
-router.get("/settings", (req, res) => {});
+  res.render("settings", { user: req.session.user, hello: "world" });
+});
 
 // * NEEDS AUTHENTICATED USER
 router.get("/update-profile", (req, res) => {});
 
 // * NEEDS AUTHENTICATED USER
-router.put("/update-profile", (req, res) => {});
+router.put("/update-profile", (req, res) => {
+  // req.body accesses input data
+});
 
 // * NEEDS AUTHENTICATED USER
-router.get("/update-password", (req, res) => {});
+router.get("/update-password", (req, res) => {
+  if (!req.session.user) {
+    // ! IT MEANS THAT THERE IS NOT USER LOGGED IN
+    return res.redirect("/auth/login");
+  }
+  res.render("update-password", { user: req.session.user });
+});
 
 // * NEEDS AUTHENTICATED USER
-router.put("/update-password", (req, res) => {});
+router.post("/update-password", (req, res) => {
+  const { oldPassword, newPassword, confirmPassword } = req.body;
+
+  if (newPassword !== confirmPassword) {
+    //   stop and wait a minute
+  }
+
+  const isSamePassword = bcrypt.compareSync(
+    oldPassword,
+    req.session.user.password
+  );
+
+  if (!isSamePassword) {
+    //   ERROR HANDLING HERE
+  }
+
+  const hashingAlgorithm = bcrypt.genSaltSync(10);
+  const hashedPassword = bcrypt.hashSync(newPassword, hashingAlgorithm);
+
+  User.findByIdAndUpdate(
+    req.session.user._id,
+    { password: hashedPassword },
+    { new: true }
+  ).then((newAndUpdatedUser) => {
+    req.session.user = newAndUpdatedUser;
+    res.render("update-password", {
+      message: "All good, successful, move away",
+    });
+  });
+});
 
 // * NEEDS AUTHENTICATED USER
 router.delete("/delete-profile", (req, res) => {});
