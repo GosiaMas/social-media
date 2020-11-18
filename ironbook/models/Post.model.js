@@ -11,6 +11,10 @@ const postSchema = new mongoose.Schema({
   },
   body: String,
   image: String,
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
 });
 
 // !TODO WHOM, COMMENTS, LIKES

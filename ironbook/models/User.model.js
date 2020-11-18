@@ -28,6 +28,12 @@ const userSchema = new mongoose.Schema({
     default: "noobie",
     type: String,
   },
+  posts: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
 });
 
 // !TODO FRIENDS, POSTS, INVITATIONS

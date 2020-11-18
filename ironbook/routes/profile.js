@@ -8,8 +8,12 @@ router.get("/settings", (req, res) => {
     // ! IT MEANS THAT THERE IS NOT USER LOGGED IN
     return res.redirect("/auth/login");
   }
-
-  res.render("settings", { user: req.session.user, hello: "world" });
+  User.findById(req.session.user._id)
+    .populate("posts")
+    .then((myUser) => {
+      console.log("myUser:", myUser);
+      res.render("settings", { user: myUser, hello: "world" });
+    });
 });
 
 // * NEEDS AUTHENTICATED USER
