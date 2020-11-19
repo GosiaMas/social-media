@@ -5,10 +5,16 @@ const bcrypt = require("bcryptjs");
 const app = require("../app");
 const salt = 10;
 
+// * This is an example of what a middleware looks like
 const shouldNotBeAuthenticated = (req, res, next) => {
+  // * Because of the express session middleware the object req.sesssion exists
+  // Here we are checking if, at any point, a property `user` was created (only happens on login)
+  // IF there is a req.session.user (a logged in user) we stop execution of the controller and just immediately redirect the user to the main page
   if (req.session.user) {
     return res.redirect("/");
   }
+
+  // IF we check that there is no user logged in, we want to let express go to the next `middleware` in the execution
   next();
 };
 
@@ -32,23 +38,30 @@ router.get("/login", (req, res) => {
 
 // Retrieve Login Request
 router.post("/login", shouldNotBeAuthenticated, (req, res) => {
+  // retrieve username and password from whatever was sent by a POST request.
+  // An example is the input data from a form
   const { username, password } = req.body;
 
   if (username.length < 4 || password.length < 8) {
     //   error handling
   }
 
+  // Here we are checking if any user exists in the database, that shares the username that user inputed
   User.findOne({ username }).then((userFromDB) => {
+    // userFromDB can either be null - in case there is no user - or a user object. in this case we are checking if there is no username. if there isnt, there is no reason to even try to log in the user
     if (!userFromDB) {
       // please provide a correct username
       return; //   error handle and say wrong username
     }
+    // bcrypt compare takes the password that it was inputed by a user and the hashed password we have in the database and check if its the same value
     bcrypt.compare(password, userFromDB.password).then((isSamePassword) => {
       if (!isSamePassword) {
         // wrong password. try again
         //  error handle and say wrong password
         return;
       }
+      // whenever we make a change to the req.session object, the cookie is set in the browser
+      // by adding a user object to the req.session object, we are making sure that the user is logged in
       // req.session.user || in this case, everytime we assign something to req.session we are storing it in the memory
       // DOWN is how we LOG IN
       req.session.user = userFromDB;
@@ -66,7 +79,7 @@ router.get("/signup", shouldNotBeAuthenticated, (req, res) => {
 router.post("/signup", shouldNotBeAuthenticated, (req, res) => {
   console.log(req.body);
   const { username, email, password, location } = req.body;
-
+  // In this section we are checking the strength / validity of the user's input
   if (
     email.length < 4 ||
     !email.includes("@") ||
@@ -84,6 +97,7 @@ router.post("/signup", shouldNotBeAuthenticated, (req, res) => {
   Password strength validator
   */
 
+  // Here we trying to check if there is *any* user on our database with either the same username or email
   User.findOne({ $or: [{ username }, { email }] })
     .then((foundUser) => {
       console.log("foundUser:", foundUser);
@@ -100,6 +114,7 @@ router.post("/signup", shouldNotBeAuthenticated, (req, res) => {
         .then((generatedSalt) => {
           return bcrypt.hash(password, generatedSalt);
         })
+        // the above section i using the bcrypt methods to to guarantee theat the passwords are correctly encrypted
         .then((hashedPassword) => {
           return User.create({
             username,
@@ -107,10 +122,13 @@ router.post("/signup", shouldNotBeAuthenticated, (req, res) => {
             location,
             password: hashedPassword,
           });
+          // given the hashed password we can finally create the user
         })
         .then((userCreated) => {
           console.log("userCreated:", userCreated);
+          // in the line below we finally log in the user
           req.session.user = userCreated;
+          // after user is created and logged in we redirect the user to the main page
           res.redirect("/");
         });
     })
@@ -132,6 +150,7 @@ router.post("/signup", shouldNotBeAuthenticated, (req, res) => {
 //   next();
 // });
 const checkAuth = (req, res, next) => {
+  // same as previously written, this middleware checks what appensiaf a user s not logged in
   if (!req.session.user) {
     return res.redirect("/auth/signup");
   }
@@ -139,9 +158,10 @@ const checkAuth = (req, res, next) => {
 };
 // // Handle Logout Request
 router.get("/logout", checkAuth, function (req, res) {
+  // This is the method on the session that is used to logout
   req.session.destroy((err) => {
     if (err) {
-      // error handleing
+      // error handling
     }
     res.redirect("/");
   });

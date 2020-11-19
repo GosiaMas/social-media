@@ -35,6 +35,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+// this is the middleware that is going to manage and deal with the req.session object. parse it, turn into a string, etc
 app.use(
   session({
     secret: "keyboard cat",

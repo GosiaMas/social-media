@@ -8,7 +8,10 @@ router.get("/settings", (req, res) => {
     // ! IT MEANS THAT THERE IS NOT USER LOGGED IN
     return res.redirect("/auth/login");
   }
+
+  // Trying to get settings related to the user. In here we are also showing the posts
   User.findById(req.session.user._id)
+    // `posts` is the property of the array of posts on the model
     .populate("posts")
     .then((myUser) => {
       console.log("myUser:", myUser);
@@ -41,6 +44,7 @@ router.post("/update-password", (req, res) => {
     //   stop and wait a minute
   }
 
+  // compareSync does the same as compare, but does it synchronously.
   const isSamePassword = bcrypt.compareSync(
     oldPassword,
     req.session.user.password
@@ -59,6 +63,7 @@ router.post("/update-password", (req, res) => {
     { new: true }
   ).then((newAndUpdatedUser) => {
     req.session.user = newAndUpdatedUser;
+    // after we update user with the new data, here we are just making sure that we have the most up to date info in the session. This user now has a new password therefore we should have the new password also on the user session
     res.render("update-password", {
       message: "All good, successful, move away",
     });
