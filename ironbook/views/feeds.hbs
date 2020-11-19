@@ -1,0 +1,19 @@
+<h1>Hello</h1>
+
+{{#each posts}}
+
+<h3>{{body}}</h3>
+
+<div style="background: grey; min-height: 50px">
+   <h6 style="color: white">Add your comment</h6>
+   {{#each comments}}
+   <p>{{body}}</p>
+   {{/each}}
+   <form action="/post/{{_id}}/new-comment" method="POST">
+
+      <input type="text" name="body">
+      <button type="submit">Submit</button>
+   </form>
+</div>
+
+{{/each}}

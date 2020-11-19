@@ -1,6 +1,7 @@
 const Post = require("../models/Post.model");
 const User = require("../models/User.model");
 const router = require("express").Router();
+const Comment = require("../models/Comment.model");
 
 // * DOES NOT NEED
 router.get("/post", (req, res) => {});
@@ -43,7 +44,24 @@ router.post("/new-post", (req, res) => {
 router.put("/like", (req, res) => {});
 
 // * NEEDS AUTHENTICATED USER
-router.post("/new-comment", (req, res) => {});
+router.post("/:id/new-comment", (req, res) => {
+  if (!req.session.user) {
+    return res.redirect("/auth/login");
+  }
+  const { id } = req.params;
+  const { body } = req.body;
+  Comment.create({
+    body,
+    post: id,
+    author: req.session.user._id,
+  }).then((newComment) => {
+    Post.findByIdAndUpdate(id, {
+      $addToSet: { comments: newComment._id },
+    }).then(() => {
+      res.redirect("/feed");
+    });
+  });
+});
 
 // * NEEDS AUTHENTICATED USER
 router.put("/post/:id", (req, res) => {});

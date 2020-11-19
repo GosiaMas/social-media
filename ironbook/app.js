@@ -12,7 +12,11 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo")(session);
 
 mongoose
-  .connect("mongodb://localhost/ironbook", { useNewUrlParser: true })
+  .connect("mongodb://localhost/ironbook", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+  })
   .then((x) => {
     console.log(
       `Connected to Mongo! Database name: "${x.connections[0].name}"`
@@ -67,14 +71,13 @@ const index = require("./routes/index");
 const authRouter = require("./routes/auth");
 const profileRoutes = require("./routes/profile");
 const postRouter = require("./routes/post");
+const feedRouter = require("./routes/feed");
 
 // router.get("/")
 app.use("/", index);
-
-// /auth/signup
-// router.get("/signup")
 app.use("/auth", authRouter);
 app.use("/profile", profileRoutes);
 app.use("/post", postRouter);
+app.use("/feed", feedRouter);
 
 module.exports = app;

@@ -6,6 +6,14 @@ const commentSchema = new mongoose.Schema({
     default: Date.now(),
   },
   body: String,
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  post: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Post",
+  },
 });
 
 // !TODO FROM WHOM and WHERE TO

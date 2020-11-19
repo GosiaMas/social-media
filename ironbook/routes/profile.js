@@ -20,11 +20,48 @@ router.get("/settings", (req, res) => {
 });
 
 // * NEEDS AUTHENTICATED USER
-router.get("/update-profile", (req, res) => {});
+router.get("/update-profile", (req, res) => {
+  if (!req.session.user) {
+    return res.redirect("/auth/login");
+  }
+
+  res.render("update-profile", { user: req.session.user });
+});
 
 // * NEEDS AUTHENTICATED USER
-router.put("/update-profile", (req, res) => {
+router.post("/update-profile", (req, res) => {
   // req.body accesses input data
+  if (!req.session.user) {
+    return res.redirect("/auth/login");
+  }
+
+  const { username, bio, location } = req.body;
+
+  if (username.length < 5 || !location) {
+    return res.render("update-profile", {
+      errorMessage: "Please fill out everything in sight",
+      user: req.session.user,
+    });
+    // send error to frontend
+  }
+
+  User.findOne({ username }).then((foundUser) => {
+    if (foundUser && foundUser.username !== req.session.user.username) {
+      return res.render("update-profile", {
+        errorMessage: "PUsername or Pemail already taken",
+        user: req.session.user,
+      });
+    }
+    User.findByIdAndUpdate(
+      req.session.user._id,
+      { username, bio, location },
+      { new: true }
+    ).then((newAndFierceUpdatedUser) => {
+      console.log("newAndFierceUpdatedUser:", newAndFierceUpdatedUser);
+      req.session.user = newAndFierceUpdatedUser;
+      res.redirect("/profile/settings");
+    });
+  });
 });
 
 // * NEEDS AUTHENTICATED USER
