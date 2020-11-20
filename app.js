@@ -42,7 +42,7 @@ app.use(cookieParser());
 // this is the middleware that is going to manage and deal with the req.session object. parse it, turn into a string, etc
 app.use(
   session({
-    secret: "keyboard cat",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: new MongoStore({ mongooseConnection: mongoose.connection }),
